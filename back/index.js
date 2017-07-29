@@ -5,14 +5,14 @@ const express = require('express')
 const bodyParser = require('body-parser');          //解析请求参数
 const models= require('./models')               //models各种数据和数据处理方法
 const routers = require("./routers");              //路由
-
+const $  = require("./utils/config")
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
 
 //设置跨域
 app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin',      "http://127.0.0.1:8080");
+    res.header('Access-Control-Allow-Origin',      $.allowOrigin);
     res.header('Access-Control-Allow-Methods',     'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers',     'X-Requested-With,content-type');
     res.header('Access-Control-Allow-Credentials', 'true');

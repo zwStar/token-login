@@ -14,46 +14,46 @@
 ##用jwt的流程是这样的<br>
   1.用户向服务器A请求登录验证<br>
   2.服务器进行验证用户的信息<br>
-  /**************************代码部分*********************/<br>
-    let LoginPromise = UserModel.find({"email": req.body.email, "password": $.md5(req.body.password)});    //返回一个promise对象<br>
-    //如果验证成功 利用jsonwebtoken生成token<br>
-    module.exports.createToken = function (email) { //创建Token<br>
-          const token = jwt.sign({<br>
-                  email<br>
-              },<br>
-              'secret', {<br>
-                  expiresIn: '10s' // 过期时间 这里只设置10s<br>
-              });<br>
-          return token;<br>
-    };<br>
-/********************************************************/<br>
-3.客户端接受token 把token存放到cookie里面<br>
-/*******************************************/<br>
-  Cookies.set('Admin-Token', data.data.token);<br>
-/*******************************************/<br>
-4.用户向服务器B进行业务操作 就会携带该token<br>
-5.服务器B通过请求头获取token<br>
+```
+let {email,password} = req.body;
+let LoginPromise = UserModel.find({"email": email, "password": $.md5(password)});  //返回一个promise对象
+ //如果验证成功 利用jsonwebtoken生成token
+    module.exports.createToken = function (email) { //创建Token
+          const token = jwt.sign({
+                  email
+              },
+              'secret', {
+                  expiresIn: '10s' // 过期时间 这里只设置10s
+              });
+          return token;
+    };
+```
+3.客户端接受token 把token存放到cookie里面
+```
+ Cookies.set('Admin-Token', data.data.token);
+```
+ 
+4.用户向服务器B进行业务操作 就会携带该token
+5.服务器B通过请求头获取token
+```
 module.exports.checkToken = function (req, res, next) { //从请求cookie中 检查token的状态信息<br>
-    let re = /Admin-Token=(.+)/;<br>
-    let token = req.headers.cookie.match(re)[1];    //从cookie中提取出token<br>
-    let decoded = jwt.verify(token, 'secret', function (err, decoded) { //jwt解析<br>
-        if (err) {<br>
-            console.log(err);<br>
-            if (err.message === "jwt expored") {<br>
-                return result(res, {success:false, msg:'token过期，请重新登录'});<br>
-            }<br>
-            return result(res, {error: "登录信息有误"});<br>
-        }<br>
-
-        return result(res, {success:true, msg:'token 正确'});<br>
-        //console.log(decoded)；     //获取信息 进行下一步操作<br>
-        //next();<br>
-    });<br>
-};<br>
-/******************************/<br>
-接下来就可以继续操作业务<br>
-
-
+    let re = /Admin-Token=(.+)/;
+    let token = req.headers.cookie.match(re)[1];    //从cookie中提取出token
+    let decoded = jwt.verify(token, 'secret', function (err, decoded) { //jwt解析
+        if (err) {
+            console.log(err);
+            if (err.message === "jwt expored") {
+                return result(res, {success:false, msg:'token过期，请重新登录'});
+            }
+            return result(res, {error: "登录信息有误"});
+        }
+        return result(res, {success:true, msg:'token 正确'});
+        //console.log(decoded)；     //获取信息 进行下一步操作
+        //next();
+    });
+};
+```
+接下来就可以继续操作业务
 
 #项目运用到的板块
 Vue.js 2+ (Vue-router vuex axios)<br>

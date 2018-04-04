@@ -61,7 +61,7 @@ Element UI<br>
 Node.js <br>
 Mongoose<br>
 Jsonwebtoken<br>
-joi		//后端表单验证
+joi		//后端表单验证<br>
 blueimp-md5	//密码md5加密
 
 
